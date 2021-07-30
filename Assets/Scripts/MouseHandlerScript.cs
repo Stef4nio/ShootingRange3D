@@ -19,7 +19,7 @@ public class MouseHandlerScript : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
-                Destroy(hit.transform.gameObject);
+                hit.transform.gameObject.GetComponent<TargetView>().Shot();
             }
             
         }
