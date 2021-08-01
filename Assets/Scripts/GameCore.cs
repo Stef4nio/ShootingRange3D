@@ -11,6 +11,7 @@ public class GameCore : MonoBehaviour
         DependencyContainer.Set((IGameModel) model);
         DependencyContainer.Set((IControllerGameModel)model);
         DependencyContainer.Set(new GameController());
+        DependencyContainer.Set(new ScoreCounterModel());
         Destroy(gameObject);
     }
 
