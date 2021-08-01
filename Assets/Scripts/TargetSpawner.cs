@@ -1,13 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Rename to GameView
 public class TargetSpawner : MonoBehaviour
 {
     [SerializeField] [Range(1, Mathf.Infinity)]private float _radius = 1f;
     [SerializeField] private GameObject _target;
 
     private IGameModel _gameModel;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,15 +27,13 @@ public class TargetSpawner : MonoBehaviour
                 GameObject targetClone = Instantiate(_target, targetPosition, new Quaternion());
                 if (i < Config.TARGETS_AMOUNT / 2)
                 {
-                    targetClone.GetComponent<TargetView>().SetModel(_gameModel.Targets[i,j]);    
+                    targetClone.GetComponent<TargetView>().SetModel(_gameModel.Targets[i][j]);    
                 }
                 else
                 {
-                    targetClone.GetComponent<TargetView>().SetModel(_gameModel.Targets[Config.TARGETS_AMOUNT - i - 1,j + 5]);
+                    targetClone.GetComponent<TargetView>().SetModel(_gameModel.Targets[Config.TARGETS_AMOUNT - i - 1][j + 5]);
                 }
             }
-            //Instantiate(_target, targetPosition, new Quaternion());
-            
         }
     }
 

@@ -7,7 +7,10 @@ public class GameCore : MonoBehaviour
 {
     private void Awake()
     {
-        DependencyContainer.Set((IGameModel)new GameModel());
+        GameModel model = new GameModel();
+        DependencyContainer.Set((IGameModel) model);
+        DependencyContainer.Set((IControllerGameModel)model);
+        DependencyContainer.Set(new GameController());
         Destroy(gameObject);
     }
 

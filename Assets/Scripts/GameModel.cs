@@ -1,25 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public class GameModel:IGameModel
+public class GameModel:IGameModel, IControllerGameModel
 {
-    TargetModel[,] _targets = new TargetModel[Config.TARGETS_AMOUNT / 2, Config.TARGETS_AMOUNT];
-
-    public TargetModel[,] Targets => _targets;
-
-    public event EventHandler _targetsChanged;
-
+    private List<List<TargetModel>> _targets = new List<List<TargetModel>>();
+    
+    public List<List<TargetModel>> Targets => _targets;
+    
     public GameModel()
     {
         CreateTargets();
     }
 
-    public void CreateTargets()
+    public void DestroyTarget(int targetId)
     {
-        for (int i = 0; i < _targets.GetLength(0); i++)
+        var foundTarget = _targets.SelectMany(x => x).Where(target => target.Id == targetId).FirstOrDefault();
+        foundTarget?.Destroy();
+    }
+    
+    private void CreateTargets()
+    {
+        for (int i = 0; i < Config.TARGETS_AMOUNT / 2; i++)
         {
-            for (int j = 0; j < _targets.GetLength(1); j++)
+            _targets.Add(new List<TargetModel>());
+            for (int j = 0; j < Config.TARGETS_AMOUNT; j++)
             {
-                _targets[i, j] = TargetModelFactory.createTargetModel(); 
+                _targets[i].Add(TargetModelFactory.createTargetModel()); 
             }
         }
     }

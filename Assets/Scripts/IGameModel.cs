@@ -1,4 +1,6 @@
-﻿public interface IGameModel
+﻿using System.Collections.Generic;
+
+public interface IGameModel
 {
-    TargetModel[,] Targets { get; }
+    List<List<TargetModel>> Targets { get; }
 }
