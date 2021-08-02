@@ -7,9 +7,6 @@ public class ScoreCounterModel
     
     public ScoreCounterModel()
     {
-        DependencyContainer.Get<IGameModel>().TargetDestroyed += (sender, args) =>
-        {
-            _score.Value++;
-        };
+        DependencyContainer.Get<IGameModel>().TargetDestroyed.Subscribe(_ => _score.Value++);
     }
 }

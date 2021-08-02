@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 //Rename to GameView
@@ -8,6 +9,10 @@ public class TargetSpawner : MonoBehaviour
 {
     [SerializeField] [Range(1, Mathf.Infinity)]private float _radius = 1f;
     [SerializeField] private GameObject _target;
+
+    private Subject<Unit> _targetsSpawned = new Subject<Unit>();
+
+    public Subject<Unit> TargetsSpawned => _targetsSpawned;
 
     private IGameModel _gameModel;
 
@@ -25,16 +30,20 @@ public class TargetSpawner : MonoBehaviour
             {
                 targetPosition = Quaternion.Euler(0,2f * Mathf.Rad2Deg * horizontalAngleDelta , 0) * targetPosition;
                 GameObject targetClone = Instantiate(_target, targetPosition, new Quaternion());
+                TargetView currTargetView = targetClone.GetComponent<TargetView>();
                 if (i < Config.TARGETS_AMOUNT / 2)
                 {
-                    targetClone.GetComponent<TargetView>().SetModel(_gameModel.Targets[i][j]);    
+                    currTargetView.SetModel(_gameModel.Targets[i][j]);    
                 }
                 else
                 {
-                    targetClone.GetComponent<TargetView>().SetModel(_gameModel.Targets[Config.TARGETS_AMOUNT - i - 1][j + 5]);
+                    currTargetView.SetModel(
+                        _gameModel.Targets[Config.TARGETS_AMOUNT - i - 1][j + Config.TARGETS_AMOUNT / 2]);
                 }
+                currTargetView.SetHighlight(false);
             }
         }
+        TargetsSpawned.OnNext(Unit.Default);
     }
 
     // Update is called once per frame

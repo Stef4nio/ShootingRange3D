@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using UniRx;
 
 public interface IGameModel
 {
     List<List<TargetModel>> Targets { get; }
-    event EventHandler TargetDestroyed;
+    IObservable<int> TargetDestroyed { get; }
 }

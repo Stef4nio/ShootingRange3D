@@ -10,7 +10,7 @@ public class ScoreView : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        DependencyContainer.Get<ScoreCounterModel>().Score.Subscribe(x =>
+        DependencyContainer.Get<ScoreCounterModel>().Score.TakeUntilDestroy(this).Subscribe(x =>
         {
             _scoreboardTextbox.text = x.ToString();
         });

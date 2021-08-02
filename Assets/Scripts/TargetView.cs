@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class TargetView : MonoBehaviour
 {
-    //Subscribe to a reactive bool property that is to be created
     private ITargetModel _targetModel;
 
     public void SetModel(ITargetModel model)
@@ -16,14 +15,24 @@ public class TargetView : MonoBehaviour
             .TakeUntilDestroy(this)
             .Subscribe(x =>
             {
-                Debug.Log($"Target #{_targetModel.Id} is properly destroyed!");
                 Destroy(gameObject);
+            });
+        _targetModel.IsHighlighted
+            .TakeUntilDestroy(this)
+            .Subscribe(isHighlighted =>
+            {
+                SetHighlight(isHighlighted);
             });
     }
 
     public int GetId()
     {
         return _targetModel.Id;
+    }
+
+    public void SetHighlight(bool isHighlighted)
+    {
+        transform.GetChild(0).gameObject.SetActive(isHighlighted);
     }
 
     // Start is called before the first frame update
