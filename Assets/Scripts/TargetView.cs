@@ -11,11 +11,10 @@ public class TargetView : MonoBehaviour
     {
         _targetModel = model;
         _targetModel.IsDestroyed
-            .Where(x => x)
             .TakeUntilDestroy(this)
-            .Subscribe(x =>
+            .Subscribe(isDestroyed =>
             {
-                Destroy(gameObject);
+                gameObject.SetActive(!isDestroyed);
             });
         _targetModel.IsHighlighted
             .TakeUntilDestroy(this)

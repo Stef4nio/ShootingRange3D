@@ -13,7 +13,12 @@ public class TargetModel:ITargetModel
 
     public IReadOnlyReactiveProperty<bool> IsDestroyed => _isDestroyed;
 
-
+    public void Reset()
+    {
+        _isHighlighted.SetValueAndForceNotify(false);
+        _isDestroyed.SetValueAndForceNotify(false);
+    }
+    
     public void Destroy()
     {
         _isDestroyed.Value = true;

@@ -10,20 +10,35 @@ public class HighlightController
 {
     private IControllerGameModel _gameModel;
     private TargetModel _currentlyHighlightedTarget;
-
-    private CoroutineManager _coroutineManager;
-
-    private Coroutine _currentHighlightCoroutine;
+    
+    private IDisposable _timerListener;
     //transfer to coroutines
     //private Timer highlightTimer;
     
     public HighlightController()
     {
-        _gameModel = DependencyContainer.Get<IControllerGameModel>();
-        _coroutineManager = DependencyContainer.Get<CoroutineManager>();
+        _gameModel = DependencyContainer.Get<IControllerGameModel>(); 
+        DependencyContainer.Get<IScoreCounterModel>().CurrentGameState
+            .Subscribe(gameState =>
+        {
+            if(gameState == GameState.Playing)
+            {
+                StartHighlightingTimer();
+            }
+            else
+            {
+                StopHighlightingTimer();
+            }
+        });
+        DependencyContainer.Get<IGameCore>().RestartInitiated
+            .Subscribe(_ =>
+            {
+                _currentlyHighlightedTarget = null;
+                StopHighlightingTimer();
+                StartHighlightingTimer();
+            });
     }
 
-    //Call this function from gameCore
     public void StartHighlighting()
     {
         StartHighlightingTimer();
@@ -38,33 +53,41 @@ public class HighlightController
 
     private void StartHighlightingTimer()
     {
-        _currentHighlightCoroutine = _coroutineManager.StartCoroutine(HighlightRandomTargetCoroutine());
+        //_currentHighlightCoroutine = _coroutineManager.StartCoroutine(HighlightRandomTargetCoroutine());
+        StopHighlightingTimer();
+        HighlightRandomTarget();
+        _timerListener = Observable.Interval(TimeSpan.FromSeconds(Config.TARGET_HIGHLIGHT_DURATION))
+            .Subscribe(_ =>
+        {
+            HighlightRandomTarget();
+        });
     }
     
     private void StopHighlightingTimer()
     {
-        _coroutineManager.StopCoroutine(_currentHighlightCoroutine);
+        _currentlyHighlightedTarget?.StopHighlighting();
+        _timerListener?.Dispose();
     }
     
     private void HighlightRandomTarget()
     {
         List<TargetModel> notDestroyedTargets = _gameModel.GetAllNotDestroyedTargets();
-        TargetModel highlightCandidate;
+        if (_currentlyHighlightedTarget != null)
+        {
+            notDestroyedTargets = notDestroyedTargets
+                .Where(target => !_gameModel.CheckIfNeighbours(target.Id, _currentlyHighlightedTarget.Id))
+                .ToList();
+        }
+
+        if (notDestroyedTargets.Count == 0)
+        {
+            Debug.Log("Game over");
+            return;
+        }
         
         _currentlyHighlightedTarget?.StopHighlighting();
-        do
-        {
-            int newHighlightedTargetPosition = Random.Range(0, notDestroyedTargets.Count() - 1);
-            highlightCandidate = notDestroyedTargets[newHighlightedTargetPosition];
-            if (_currentlyHighlightedTarget == null)
-            {
-                break;
-            }
-        } while (highlightCandidate.IsDestroyed.Value ||
-                 _gameModel.CheckIfNeighbours(highlightCandidate.Id, _currentlyHighlightedTarget.Id));
-        
-
-        _currentlyHighlightedTarget = highlightCandidate;
+        int newHighlightedTargetPosition = Random.Range(0, notDestroyedTargets.Count() - 1);
+        _currentlyHighlightedTarget = notDestroyedTargets[newHighlightedTargetPosition];
         _currentlyHighlightedTarget.Highlight();
         
         /*if (_currentlyHighlightedTarget.IsDestroyed.Value)
@@ -73,14 +96,4 @@ public class HighlightController
         }*/
     }
     
-    private IEnumerator HighlightRandomTargetCoroutine()
-    {
-        while (true)
-        {
-            HighlightRandomTarget();
-            yield return new WaitForSeconds(Config.TARGET_HIGHLIGHT_DURATION);
-        }
-
-        yield return null;
-    }
 }

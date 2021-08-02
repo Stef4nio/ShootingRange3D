@@ -7,12 +7,12 @@ using UnityEngine;
 //Rename to GameView
 public class TargetSpawner : MonoBehaviour
 {
-    [SerializeField] [Range(1, Mathf.Infinity)]private float _radius = 1f;
-    [SerializeField] private GameObject _target;
+    [SerializeField] [Range(1f, 25f)]private float _radius = 1f;
+    [SerializeField] private GameObject _target = null;
 
     private Subject<Unit> _targetsSpawned = new Subject<Unit>();
 
-    public Subject<Unit> TargetsSpawned => _targetsSpawned;
+    public IObservable<Unit> TargetsSpawned => _targetsSpawned;
 
     private IGameModel _gameModel;
 
@@ -20,6 +20,17 @@ public class TargetSpawner : MonoBehaviour
     void Start()
     {
         _gameModel = DependencyContainer.Get<IGameModel>();
+        SpawnTargets();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    private void SpawnTargets()
+    {
         float verticalAngleDelta = Mathf.PI / (Config.TARGETS_AMOUNT - 1);
         float horizontalAngleDelta = Mathf.PI / Config.TARGETS_AMOUNT;
         for (int i = 0; i < Config.TARGETS_AMOUNT; i++)
@@ -43,15 +54,9 @@ public class TargetSpawner : MonoBehaviour
                 currTargetView.SetHighlight(false);
             }
         }
-        TargetsSpawned.OnNext(Unit.Default);
+        _targetsSpawned.OnNext(Unit.Default);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    
     /// <summary>
     /// Function that converts coordinates in polar system to cartesian system
     /// </summary>
