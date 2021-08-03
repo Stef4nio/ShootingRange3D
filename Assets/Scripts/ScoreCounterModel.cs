@@ -6,7 +6,7 @@ public class ScoreCounterModel: IRestartableScoreCounterModel, IScoreCounterMode
     private ReactiveProperty<int> _score = new ReactiveProperty<int>(0);
     public IReadOnlyReactiveProperty<int> Score => _score;
     
-    private ReactiveProperty<GameState> _currentGameState = new ReactiveProperty<GameState>(GameState.Playing);
+    private ReactiveProperty<GameState> _currentGameState = new ReactiveProperty<GameState>(GameState.PreGame);
     public IReadOnlyReactiveProperty<GameState> CurrentGameState => _currentGameState;
 
     private IRestartableGameCore _gameCore;
@@ -15,6 +15,10 @@ public class ScoreCounterModel: IRestartableScoreCounterModel, IScoreCounterMode
     {
         IControllerGameModel gameModel = DependencyContainer.Get<IControllerGameModel>();
         _gameCore = DependencyContainer.Get<IRestartableGameCore>();
+        DependencyContainer.Get<MainMenuController>().StartButtonPressed.Subscribe(_ =>
+        {
+            StartGame();
+        });
         DependencyContainer.Get<IGameModel>().TargetDestroyed.Subscribe(targetId =>
         {
             if (gameModel.GetTargetModelById(targetId).IsHighlighted.Value)
@@ -39,6 +43,11 @@ public class ScoreCounterModel: IRestartableScoreCounterModel, IScoreCounterMode
             });
     }
 
+    private void StartGame()
+    {
+        _currentGameState.Value = GameState.Playing;
+    }
+    
     public void InitiateRestart()
     {
         _gameCore.InitiateRestart();

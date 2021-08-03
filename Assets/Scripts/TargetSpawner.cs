@@ -20,7 +20,14 @@ public class TargetSpawner : MonoBehaviour
     void Start()
     {
         _gameModel = DependencyContainer.Get<IGameModel>();
-        SpawnTargets();
+        //TODO:start with the click of a start button
+        DependencyContainer.Get<IScoreCounterModel>().CurrentGameState
+            .Where(state => state == GameState.Playing)
+            .Take(1)
+            .Subscribe(x =>
+            {   
+                SpawnTargets();
+            });
     }
 
     // Update is called once per frame

@@ -7,6 +7,7 @@ using UnityEngine;
 public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
 {
     [SerializeField] private TargetSpawner _targetSpawner = null;
+    [SerializeField] private MainMenuController _mainMenuController = null;
 
     private Subject<Unit> _restartInitiated = new Subject<Unit>();
     private Subject<Unit> _gameLost = new Subject<Unit>();
@@ -16,9 +17,11 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
 
     private void Awake()
     {
+        DependencyContainer.Set(_mainMenuController);
+        
         DependencyContainer.Set((IGameCore) this);
         DependencyContainer.Set((IRestartableGameCore) this);
-        
+
         GameModel model = new GameModel();
         DependencyContainer.Set((IGameModel) model);
         DependencyContainer.Set((IControllerGameModel)model);
@@ -32,11 +35,23 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
         {
             DependencyContainer.Get<HighlightController>().StartHighlighting();
         });
-        IDisposable loseTimer = Observable
-            .Timer(TimeSpan.FromSeconds(Config.TARGETS_GOAL_AMOUNT * Config.TARGET_HIGHLIGHT_DURATION))
-            .Subscribe(_ =>
+
+        IDisposable loseTimer = null;
+        
+        DependencyContainer.Get<IScoreCounterModel>().CurrentGameState
+            .TakeUntilDestroy(this)
+            .Subscribe(state =>
             {
-                _gameLost.OnNext(Unit.Default);
+                if(state == GameState.Playing)
+                {
+                    loseTimer = Observable
+                        .Timer(TimeSpan.FromSeconds(Config.TARGETS_GOAL_AMOUNT * Config.TARGET_HIGHLIGHT_DURATION))
+                        .Subscribe(_ => { _gameLost.OnNext(Unit.Default); });
+                }
+                else
+                {
+                    loseTimer?.Dispose();
+                }
             });
     }
 
