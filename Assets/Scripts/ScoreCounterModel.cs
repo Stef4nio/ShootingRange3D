@@ -1,4 +1,5 @@
 ﻿using UniRx;
+using UnityEngine;
 
 public class ScoreCounterModel: IRestartableScoreCounterModel, IScoreCounterModel
 {
@@ -30,6 +31,11 @@ public class ScoreCounterModel: IRestartableScoreCounterModel, IScoreCounterMode
             {
                 _score.Value = 0;
                 _currentGameState.Value = GameState.Playing;
+            });
+        DependencyContainer.Get<IGameCore>().GameLost
+            .Subscribe(_ =>
+            {
+                _currentGameState.Value = GameState.GameLost;
             });
     }
 

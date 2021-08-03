@@ -31,6 +31,12 @@ public class ScoreView : MonoBehaviour
                         break;
                 }
             });
+        DependencyContainer.Get<IGameCore>().RestartInitiated
+            .TakeUntilDestroy(this)
+            .Subscribe(_ =>
+            {
+                _scoreboardTextbox.text = "0";
+            });
     }
 
     // Update is called once per frame

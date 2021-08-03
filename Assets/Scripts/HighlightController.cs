@@ -27,16 +27,10 @@ public class HighlightController
             }
             else
             {
+                Debug.Log("Game over, stopping highlighting");
                 StopHighlightingTimer();
             }
         });
-        DependencyContainer.Get<IGameCore>().RestartInitiated
-            .Subscribe(_ =>
-            {
-                _currentlyHighlightedTarget = null;
-                StopHighlightingTimer();
-                StartHighlightingTimer();
-            });
     }
 
     public void StartHighlighting()
@@ -46,8 +40,11 @@ public class HighlightController
             .Where(targetId => targetId == _currentlyHighlightedTarget.Id)
             .Subscribe(targetId =>
             {
-                StopHighlightingTimer();
-                StartHighlightingTimer();
+                if (DependencyContainer.Get<IScoreCounterModel>().CurrentGameState.Value == GameState.Playing)
+                {
+                    StopHighlightingTimer();
+                    StartHighlightingTimer();   
+                }
             });
     }
 

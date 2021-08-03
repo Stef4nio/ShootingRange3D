@@ -9,8 +9,10 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
     [SerializeField] private TargetSpawner _targetSpawner = null;
 
     private Subject<Unit> _restartInitiated = new Subject<Unit>();
+    private Subject<Unit> _gameLost = new Subject<Unit>();
 
     public IObservable<Unit> RestartInitiated => _restartInitiated;
+    public IObservable<Unit> GameLost => _gameLost;
 
     private void Awake()
     {
@@ -30,7 +32,12 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
         {
             DependencyContainer.Get<HighlightController>().StartHighlighting();
         });
-        //Destroy(gameObject);
+        IDisposable loseTimer = Observable
+            .Timer(TimeSpan.FromSeconds(Config.TARGETS_GOAL_AMOUNT * Config.TARGET_HIGHLIGHT_DURATION))
+            .Subscribe(_ =>
+            {
+                _gameLost.OnNext(Unit.Default);
+            });
     }
 
     public void InitiateRestart()
