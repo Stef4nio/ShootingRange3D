@@ -24,6 +24,7 @@ public class CameraController : MonoBehaviour
 			});
 	}
 
+	//Rotates player's camera according to his mouse movements
 	void Update()
 	{
 		_rotationY += Input.GetAxis("Mouse X") * _sensitivity;
@@ -33,7 +34,7 @@ public class CameraController : MonoBehaviour
 
 		transform.localEulerAngles = new Vector3(0, _rotationY, 0);
 		_camera.transform.localEulerAngles = new Vector3(-_rotationX, 0, 0);
-
+		
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			UnlockCursor();
@@ -45,12 +46,18 @@ public class CameraController : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Unlocks player's cursor to select menu options
+	/// </summary>
 	public void UnlockCursor()
 	{
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 	}
 	
+	/// <summary>
+	/// Locks player's cursor into a crosshair
+	/// </summary>
 	public void LockCursor()
 	{
 		Cursor.lockState = CursorLockMode.Locked;

@@ -14,6 +14,7 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
     public IObservable<Unit> RestartInitiated => _restartInitiated;
     public IObservable<Unit> GameLost => _gameLost;
 
+    //Sets all the dependencies for later usage in the game and starts player lose countdown
     private void Awake()
     {
         DependencyContainer.Set(_mainMenuController);
@@ -31,11 +32,6 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
         DependencyContainer.Set((IRestartableScoreCounterModel)scoreCounterModel);
         DependencyContainer.Set(new HighlightController());
         DependencyContainer.Set(new PlayersResultsManager());
-        /*_targetSpawner.TargetsSpawned
-            .Subscribe(_ =>
-        {
-            DependencyContainer.Get<HighlightController>().StartHighlighting();
-        });*/
 
         IDisposable loseTimer = null;
         
@@ -56,6 +52,9 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
             });
     }
 
+    /// <summary>
+    /// Notifies everyone that restart is requested
+    /// </summary>
     public void InitiateRestart()
     {
         _restartInitiated.OnNext(Unit.Default);

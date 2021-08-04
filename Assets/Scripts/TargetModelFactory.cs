@@ -2,7 +2,11 @@
 {
     private static int _id = 0;
 
-    public static TargetModel createTargetModel()
+    /// <summary>
+    /// Returns a newly created target with unique id
+    /// </summary>
+    /// <returns></returns>
+    public static TargetModel CreateTargetModel()
     {
         return new TargetModel(_id++);
     }

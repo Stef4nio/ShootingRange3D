@@ -11,6 +11,7 @@ public class PlayersResultsManager
     private string _currentPlayerName = "";
     private TimeSpan _currentPlayerTime = TimeSpan.Zero; 
 
+    //Subscribes to game start and finish events to capture players name and time respectively
     public PlayersResultsManager()
     {
         DependencyContainer.Get<MainMenuController>().StartButtonPressed.Subscribe(_ =>
@@ -26,9 +27,10 @@ public class PlayersResultsManager
             });
     }
 
+    //Puts player's results into a container and saves them to PlayerPrefs
     private void SaveResults()
     {
-        //Create a separate class to store playerPrefs keys
+        //Get previous results
         string playerResultsJson = PlayerPrefs.GetString(Config.PLAYERS_RESULTS_PLAYERPREFS_KEY);
         List<PlayerResultsContainer> playersResults;
         if (playerResultsJson != "")
@@ -40,6 +42,7 @@ public class PlayersResultsManager
             playersResults = new List<PlayerResultsContainer>();
         }
 
+        //Add new results
         playersResults.Add(new PlayerResultsContainer(_currentPlayerName,_currentPlayerTime));
         
         playersResults.Sort((a, b) =>
@@ -57,6 +60,7 @@ public class PlayersResultsManager
             return 0;
         });
 
+        //We only have 10 view slots, so there is no need to save more
         if (playersResults.Count > 10)
         {
             playersResults.RemoveRange(10,playersResults.Count - 10);   

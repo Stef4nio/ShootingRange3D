@@ -58,24 +58,38 @@ public class ScoreCounterModel: IRestartableScoreCounterModel, IScoreCounterMode
             });
     }
 
+    /// <summary>
+    /// Finishes the game with specified outcome
+    /// </summary>
+    /// <param name="isWon">Has player won or lost</param>
     private void FinishGame(bool isWon)
     {
         _gameDuration = DateTime.Now - _gameStartTime;
         _currentGameState.Value = isWon ? GameState.GameWon : GameState.GameLost;
     }
 
+    /// <summary>
+    /// Lose the game and specify the cause of that
+    /// </summary>
+    /// <param name="cause">Reason of player losing the game</param>
     private void LoseGame(LoseCause cause)
     {
         _loseCause = cause;
         FinishGame(false);
     }
     
+    /// <summary>
+    /// Starts the game, and player's timer
+    /// </summary>
     private void StartGame()
     {
         _gameStartTime = DateTime.Now;
         _currentGameState.Value = GameState.Playing;
     }
     
+    /// <summary>
+    /// Notifies gameCore about the need of restarting
+    /// </summary>
     public void InitiateRestart()
     {
         _gameCore.InitiateRestart();

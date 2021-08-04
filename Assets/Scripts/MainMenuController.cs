@@ -14,7 +14,7 @@ public class MainMenuController : MonoBehaviour
     private Subject<Unit> _startButtonPressed = new Subject<Unit>();
 
     public IObservable<Unit> StartButtonPressed => _startButtonPressed;
-    // Start is called before the first frame update
+    // Subscribes to all the inner UI events
     void Start()
     {
         gameObject.SetActive(true);
@@ -39,6 +39,10 @@ public class MainMenuController : MonoBehaviour
             });
     }
 
+    /// <summary>
+    /// Returns you player's name
+    /// </summary>
+    /// <returns>Player's name</returns>
     public string GetPlayerName()
     {
         return _playerNameInputField.text;

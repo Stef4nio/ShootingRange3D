@@ -6,15 +6,15 @@ using UnityEngine.UI;
 
 public class ScoreView : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //Subscribes to score update, and gameState or restart events as well, to hide and show itself respectively
     void Start()
     {
-        Text _scoreboardTextbox = GetComponent<Text>();
+        Text scoreboardTextbox = GetComponent<Text>();
         DependencyContainer.Get<IScoreCounterModel>().Score
             .TakeUntilDestroy(this)
             .Subscribe(x =>
         {
-            _scoreboardTextbox.text = x.ToString();
+            scoreboardTextbox.text = x.ToString();
             
         });
         DependencyContainer.Get<IScoreCounterModel>().CurrentGameState
@@ -27,7 +27,7 @@ public class ScoreView : MonoBehaviour
             .TakeUntilDestroy(this)
             .Subscribe(_ =>
             {
-                _scoreboardTextbox.text = "0";
+                scoreboardTextbox.text = "0";
             });
     }
 

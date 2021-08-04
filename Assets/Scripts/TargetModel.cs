@@ -14,22 +14,34 @@ public class TargetModel:ITargetModel
 
     public IReadOnlyReactiveProperty<bool> IsDestroyed => _isDestroyed;
 
+    /// <summary>
+    /// Resets current target to its initial state
+    /// </summary>
     public void Reset()
     {
         _isHighlighted.SetValueAndForceNotify(false);
         _isDestroyed.SetValueAndForceNotify(false);
     }
     
+    /// <summary>
+    /// Marks target as destroyed
+    /// </summary>
     public void Destroy()
     {
         _isDestroyed.Value = true;
     }
 
+    /// <summary>
+    /// Marks target as highlighted
+    /// </summary>
     public void Highlight()
     {
         _isHighlighted.SetValueAndForceNotify(true);
     }
     
+    /// <summary>
+    /// Marks target as not highlighted
+    /// </summary>
     public void StopHighlighting()
     {
         _isHighlighted.SetValueAndForceNotify(false);

@@ -27,19 +27,26 @@ public class LeaderboardView : MonoBehaviour
         gameObject.SetActive(false);
     }
     
+    /// <summary>
+    /// Draws a list of playerResults to a nice table
+    /// </summary>
+    /// <param name="results">List of players results</param>
     public void Show(List<PlayerResultsContainer> results)
     {
         gameObject.SetActive(true);
         int currResultPosition = 0;
         bool skipHeader = true;
+        //Iterating over the table rows
         foreach (Transform row in _leaderboardTable.transform.GetChild(0))
         {
+            //The header is already setup from the editor, so we skip it
             if (skipHeader)
             {
                 skipHeader = false;
                 continue;
             }
 
+            //If there are not enough records of previous games, then we leave other rows empty
             if (currResultPosition < results.Count)
             {
                 row.GetChild(1).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text =
@@ -58,6 +65,9 @@ public class LeaderboardView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears all the table(except the header)
+    /// </summary>
     private void ClearTable()
     {
         bool skipHeader = true;

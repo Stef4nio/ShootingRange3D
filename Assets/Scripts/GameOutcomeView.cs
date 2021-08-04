@@ -18,7 +18,8 @@ public class GameOutcomeView : MonoBehaviour
     [SerializeField] private Button _restartButton = null;
     [SerializeField] private Button _leaderboardButton = null;
     [SerializeField] private Button _exitButton = null;
-    // Start is called before the first frame update
+    
+    //Subscribes to their UI elements events, and also to change of the gameState, to show player his results
     void Start()
     {
         _gameFinishedPanel.SetActive(false);
@@ -89,6 +90,9 @@ public class GameOutcomeView : MonoBehaviour
             });
     }
 
+    /// <summary>
+    /// Reacts to a player clicking the restarts button and notifies everyone else about that
+    /// </summary>
     private void RestartGame()
     {
         DependencyContainer.Get<IRestartableScoreCounterModel>().InitiateRestart();

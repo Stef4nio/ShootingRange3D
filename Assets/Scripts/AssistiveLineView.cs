@@ -9,8 +9,8 @@ public class AssistiveLineView : MonoBehaviour
 {
     [SerializeField] private TargetSpawner _targetSpawner = null;
     private LineRenderer _lineRenderer;
-
-    // Start is called before the first frame update
+    
+    //Subscribes to event that points are updated, and draws them when needed
     void Start()
     {
         _lineRenderer = GetComponent<LineRenderer>();
@@ -20,7 +20,7 @@ public class AssistiveLineView : MonoBehaviour
             {
                 _lineRenderer.positionCount = pointIds.Count;
                 _lineRenderer
-                    .SetPositions(pointIds.Select(id => _targetSpawner.getTargetPositionById(id)).ToArray());
+                    .SetPositions(pointIds.Select(id => _targetSpawner.GetTargetPositionById(id)).ToArray());
 
             });
     }
