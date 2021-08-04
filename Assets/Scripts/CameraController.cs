@@ -39,7 +39,7 @@ public class CameraController : MonoBehaviour
 			UnlockCursor();
 		}
 
-		if (Cursor.visible && Input.GetMouseButtonDown(1))
+		if (Cursor.visible && Input.GetMouseButtonDown(0))
 		{
 			LockCursor();
 		}

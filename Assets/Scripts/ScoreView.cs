@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class ScoreView : MonoBehaviour
 {
-    [SerializeField] private Text _scoreboardTextbox = null;
     // Start is called before the first frame update
     void Start()
     {
+        Text _scoreboardTextbox = GetComponent<Text>();
         DependencyContainer.Get<IScoreCounterModel>().Score
             .TakeUntilDestroy(this)
             .Subscribe(x =>
@@ -19,17 +19,9 @@ public class ScoreView : MonoBehaviour
         });
         DependencyContainer.Get<IScoreCounterModel>().CurrentGameState
             .TakeUntilDestroy(this)
-            .Subscribe(gameState =>
+            .Subscribe(state =>
             {
-                switch (gameState)
-                {
-                    case GameState.GameWon:
-                        _scoreboardTextbox.text = "YOU WIN!!!";
-                        break;
-                    case GameState.GameLost:
-                        _scoreboardTextbox.text = "you lose...";
-                        break;
-                }
+                gameObject.SetActive(state == GameState.Playing);
             });
         DependencyContainer.Get<IGameCore>().RestartInitiated
             .TakeUntilDestroy(this)

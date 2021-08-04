@@ -7,8 +7,9 @@ using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
-    [SerializeField] private Button _startButton;
-    [SerializeField] private Button _exitButton;
+    [SerializeField] private Button _startButton = null;
+    [SerializeField] private Button _exitButton = null;
+    [SerializeField] private InputField _playerNameInputField = null;
     
     private Subject<Unit> _startButtonPressed = new Subject<Unit>();
 
@@ -16,6 +17,13 @@ public class MainMenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameObject.SetActive(true);
+        _playerNameInputField.OnValueChangedAsObservable()
+            .TakeUntilDestroy(this)
+            .Subscribe(value =>
+            {
+                _startButton.interactable = value != "";
+            });
         _startButton.OnClickAsObservable()
             .TakeUntilDestroy(this)
             .Subscribe(_ =>
@@ -25,6 +33,11 @@ public class MainMenuController : MonoBehaviour
             });
     }
 
+    public string GetPlayerName()
+    {
+        return _playerNameInputField.text;
+    }
+    
     // Update is called once per frame
     void Update()
     {

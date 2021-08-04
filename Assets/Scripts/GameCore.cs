@@ -30,6 +30,7 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
         DependencyContainer.Set((IScoreCounterModel)scoreCounterModel);
         DependencyContainer.Set((IRestartableScoreCounterModel)scoreCounterModel);
         DependencyContainer.Set(new HighlightController());
+        DependencyContainer.Set(new PlayersResultsManager());
         _targetSpawner.TargetsSpawned
             .Subscribe(_ =>
         {

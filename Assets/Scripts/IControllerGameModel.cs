@@ -14,4 +14,6 @@ public interface IControllerGameModel
 
     List<TargetModel> GetAllNotDestroyedTargets();
 
+    int GetTargetsLeft();
+
 }

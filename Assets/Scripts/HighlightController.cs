@@ -68,23 +68,24 @@ public class HighlightController
     
     private void HighlightRandomTarget()
     {
-        List<TargetModel> notDestroyedTargets = _gameModel.GetAllNotDestroyedTargets();
+        List<TargetModel> eligibleTargets = _gameModel.GetAllNotDestroyedTargets();
         if (_currentlyHighlightedTarget != null)
         {
-            notDestroyedTargets = notDestroyedTargets
+            eligibleTargets = eligibleTargets
                 .Where(target => !_gameModel.CheckIfNeighbours(target.Id, _currentlyHighlightedTarget.Id))
                 .ToList();
         }
 
-        if (notDestroyedTargets.Count == 0)
+        if (eligibleTargets.Count <= 1)
         {
-            Debug.Log("Game over");
+            Debug.Log("Not so many targets to pick from, adding new ones...");
+            eligibleTargets = _gameModel.GetAllNotDestroyedTargets();
             return;
         }
         
         _currentlyHighlightedTarget?.StopHighlighting();
-        int newHighlightedTargetPosition = Random.Range(0, notDestroyedTargets.Count() - 1);
-        _currentlyHighlightedTarget = notDestroyedTargets[newHighlightedTargetPosition];
+        int newHighlightedTargetPosition = Random.Range(0, eligibleTargets.Count() - 1);
+        _currentlyHighlightedTarget = eligibleTargets[newHighlightedTargetPosition];
         _currentlyHighlightedTarget.Highlight();
         
         /*if (_currentlyHighlightedTarget.IsDestroyed.Value)

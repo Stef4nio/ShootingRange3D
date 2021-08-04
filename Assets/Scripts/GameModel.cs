@@ -55,6 +55,11 @@ public class GameModel:IGameModel, IControllerGameModel
         _targetDestroyed?.OnNext(targetId);
     }
 
+    public int GetTargetsLeft()
+    {
+        return GetAllNotDestroyedTargets().Count;
+    }
+
     public List<TargetModel> GetAllNotDestroyedTargets()
     {
         return _targets
