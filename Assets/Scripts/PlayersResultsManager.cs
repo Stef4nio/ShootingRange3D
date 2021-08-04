@@ -30,7 +30,6 @@ public class PlayersResultsManager
     {
         //Create a separate class to store playerPrefs keys
         string playerResultsJson = PlayerPrefs.GetString(Config.PLAYERS_RESULTS_PLAYERPREFS_KEY);
-        Debug.LogWarning(playerResultsJson);
         List<PlayerResultsContainer> playersResults;
         if (playerResultsJson != "")
         {

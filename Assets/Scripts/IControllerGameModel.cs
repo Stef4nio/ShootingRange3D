@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UniRx;
 
-public interface IControllerGameModel
+public interface IControllerGameModel: IGameModel
 {
     int GetTotalTargetsAmount();
     void DestroyTarget(int targetId);
-    IObservable<int> TargetDestroyed { get; }
 
     TargetModel GetTargetModelById(int targetId);
 

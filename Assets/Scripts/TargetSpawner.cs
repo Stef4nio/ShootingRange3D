@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
@@ -10,6 +10,8 @@ public class TargetSpawner : MonoBehaviour
     [SerializeField] [Range(1f, 25f)]private float _radius = 1f;
     [SerializeField] private GameObject _target = null;
 
+    private List<TargetView> _allTargetViews = new List<TargetView>();
+    
     private Subject<Unit> _targetsSpawned = new Subject<Unit>();
 
     public IObservable<Unit> TargetsSpawned => _targetsSpawned;
@@ -58,7 +60,10 @@ public class TargetSpawner : MonoBehaviour
                     currTargetView.SetModel(
                         _gameModel.Targets[Config.TARGETS_AMOUNT - i - 1][j + Config.TARGETS_AMOUNT / 2]);
                 }
-                currTargetView.SetHighlight(false);
+
+                targetClone.name = "Target #" + currTargetView.GetId();
+                //currTargetView.SetHighlight(false);
+                _allTargetViews.Add(currTargetView);
             }
         }
         _targetsSpawned.OnNext(Unit.Default);
@@ -73,5 +78,10 @@ public class TargetSpawner : MonoBehaviour
     private Vector3 polarToCartesian(float radius, float angle)
     {
         return new Vector3(radius*Mathf.Cos(angle),0,radius*Mathf.Sin(angle));
+    }
+
+    public Vector3 getTargetPositionById(int id)
+    {
+        return _allTargetViews.Find(view => view.GetId() == id).gameObject.transform.position;
     }
 }

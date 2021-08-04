@@ -18,6 +18,12 @@ public class MainMenuController : MonoBehaviour
     void Start()
     {
         gameObject.SetActive(true);
+        _exitButton.OnClickAsObservable()
+            .TakeUntilDestroy(this)
+            .Subscribe(_ =>
+            {
+                Application.Quit();
+            });
         _playerNameInputField.OnValueChangedAsObservable()
             .TakeUntilDestroy(this)
             .Subscribe(value =>

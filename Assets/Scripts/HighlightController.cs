@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UniRx;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -27,15 +28,9 @@ public class HighlightController
             }
             else
             {
-                Debug.Log("Game over, stopping highlighting");
                 StopHighlightingTimer();
             }
         });
-    }
-
-    public void StartHighlighting()
-    {
-        StartHighlightingTimer();
         _gameModel.TargetDestroyed
             .Where(targetId => targetId == _currentlyHighlightedTarget.Id)
             .Subscribe(targetId =>
@@ -47,6 +42,7 @@ public class HighlightController
                 }
             });
     }
+    
 
     private void StartHighlightingTimer()
     {
@@ -83,15 +79,59 @@ public class HighlightController
             return;
         }
         
-        _currentlyHighlightedTarget?.StopHighlighting();
+        
         int newHighlightedTargetPosition = Random.Range(0, eligibleTargets.Count() - 1);
+        if (_currentlyHighlightedTarget != null)
+        {
+            _currentlyHighlightedTarget.StopHighlighting();
+            
+            SetupAssistiveLine(_currentlyHighlightedTarget, 
+                eligibleTargets[newHighlightedTargetPosition]);   
+        }
         _currentlyHighlightedTarget = eligibleTargets[newHighlightedTargetPosition];
         _currentlyHighlightedTarget.Highlight();
-        
-        /*if (_currentlyHighlightedTarget.IsDestroyed.Value)
+    }
+
+    private void SetupAssistiveLine(TargetModel previousTarget, TargetModel currentTarget)
+    {
+        (int, int) prevTargetPos = _gameModel.GetTargetIndices(previousTarget);
+        (int, int) currTargetPos = _gameModel.GetTargetIndices(currentTarget);
+        int deltaX = currTargetPos.Item2 - prevTargetPos.Item2;
+        int deltaY = currTargetPos.Item1 - prevTargetPos.Item1;
+        bool isUp = deltaY > 0;
+        bool isRight = deltaX > 0;
+        List<TargetModel> linePoints = new List<TargetModel>();
+        if (isRight)
         {
-            Debug.LogError($"Target #{newHighlightedTargetPosition} is destroyed, but highlighted");
-        }*/
+            for (int j = prevTargetPos.Item2; j < prevTargetPos.Item2 + deltaX; j++)
+            {
+                linePoints.Add(_gameModel.Targets[prevTargetPos.Item1][j]);
+            }
+        }
+        else
+        {
+            for (int j = prevTargetPos.Item2; j > prevTargetPos.Item2 + deltaX; j--)
+            {
+                linePoints.Add(_gameModel.Targets[prevTargetPos.Item1][j]);
+            }
+        }
+        
+        if (isUp)
+        {
+            for (int i = prevTargetPos.Item1; i <= prevTargetPos.Item1+deltaY; i++)
+            {
+                linePoints.Add(_gameModel.Targets[i][prevTargetPos.Item2+deltaX]);
+            }
+        }
+        else
+        {
+            for (int i = prevTargetPos.Item1; i >= prevTargetPos.Item1+deltaY; i--)
+            {
+                linePoints.Add(_gameModel.Targets[i][prevTargetPos.Item2+deltaX]);
+            }
+        }
+        DependencyContainer.Get<AssistiveLineModel>()
+            .setLinePointsId(linePoints.Select(target => target.Id).ToArray());
     }
     
 }

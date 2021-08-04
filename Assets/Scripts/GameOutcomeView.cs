@@ -13,14 +13,21 @@ public class GameOutcomeView : MonoBehaviour
     [SerializeField] private Text _gameOutcomeTextbox = null;
     [SerializeField] private Text _playerTimeTextbox = null;
     [SerializeField] private GameObject _leaderboardPanel = null;
-    [SerializeField] private Button _leaderboardBackButton;
+    [SerializeField] private Button _leaderboardBackButton = null;
     
     [SerializeField] private Button _restartButton = null;
     [SerializeField] private Button _leaderboardButton = null;
+    [SerializeField] private Button _exitButton = null;
     // Start is called before the first frame update
     void Start()
     {
         _gameFinishedPanel.SetActive(false);
+        _exitButton.OnClickAsObservable()
+            .TakeUntilDestroy(this)
+            .Subscribe(_ =>
+            {
+                Application.Quit();
+            });
         _leaderboardButton.OnClickAsObservable()
             .TakeUntilDestroy(this)
             .Subscribe(_ =>

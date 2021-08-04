@@ -86,4 +86,20 @@ public class GameModel:IGameModel, IControllerGameModel
         return idDifference == 0 || idDifference == 1 || idDifference == Config.TARGETS_AMOUNT ||
                Math.Abs(idDifference - Config.TARGETS_AMOUNT) == 1;
     }
+
+    public (int, int) GetTargetIndices(TargetModel target)
+    {
+        for (int i = 0; i < Targets.Count; i++)
+        {
+            for (int j = 0; j < Targets[i].Count; j++)
+            {
+                if (target == Targets[i][j])
+                {
+                    return (i, j);
+                }
+            }
+        }
+
+        return (-1, -1);
+    }
 }

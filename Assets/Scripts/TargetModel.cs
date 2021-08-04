@@ -1,5 +1,6 @@
 ﻿using System;
 using UniRx;
+using UnityEngine;
 
 public class TargetModel:ITargetModel
 {
@@ -42,5 +43,25 @@ public class TargetModel:ITargetModel
     public TargetModel(int id)
     {
         _id = id;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return this == obj as TargetModel;
+    }
+
+    public override int GetHashCode()
+    {
+        return Id;
+    }
+
+    public static bool operator ==(TargetModel a, TargetModel b)
+    {
+        return a?._id == b?._id;
+    }
+    
+    public static bool operator !=(TargetModel a, TargetModel b)
+    {
+        return a?._id != b?._id;
     }
 }

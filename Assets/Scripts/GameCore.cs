@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
 {
-    [SerializeField] private TargetSpawner _targetSpawner = null;
     [SerializeField] private MainMenuController _mainMenuController = null;
 
     private Subject<Unit> _restartInitiated = new Subject<Unit>();
@@ -25,17 +24,18 @@ public class GameCore : MonoBehaviour, IGameCore, IRestartableGameCore
         GameModel model = new GameModel();
         DependencyContainer.Set((IGameModel) model);
         DependencyContainer.Set((IControllerGameModel)model);
+        DependencyContainer.Set(new AssistiveLineModel());
         DependencyContainer.Set(new GameController());
         ScoreCounterModel scoreCounterModel = new ScoreCounterModel();
         DependencyContainer.Set((IScoreCounterModel)scoreCounterModel);
         DependencyContainer.Set((IRestartableScoreCounterModel)scoreCounterModel);
         DependencyContainer.Set(new HighlightController());
         DependencyContainer.Set(new PlayersResultsManager());
-        _targetSpawner.TargetsSpawned
+        /*_targetSpawner.TargetsSpawned
             .Subscribe(_ =>
         {
             DependencyContainer.Get<HighlightController>().StartHighlighting();
-        });
+        });*/
 
         IDisposable loseTimer = null;
         
